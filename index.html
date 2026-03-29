@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>7TH</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary:#111;
+    --accent:#c9a96e;
+    --bg:#f1f1f1;
+    --text:#111;
+}
+
+/* --- BODY --- */
+body{
+    margin:0;
+    padding:0;
+    font-family:'Poppins',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    scroll-behavior:smooth;
+}
+
+/* --- TOP BAR --- */
+.top-bar{
+    width:100%;
+    background:var(--bg);
+    padding:8px 40px;
+    box-sizing:border-box;
+}
+.top-bar-links{
+    display:flex;
+    justify-content:flex-end;
+    gap:20px;
+    font-weight:600;
+}
+.top-bar a{
+    text-decoration:none;
+    color:var(--text);
+    padding:6px 15px;
+    border-radius:50px;
+    font-size:14px;
+    transition:0.3s;
+}
+.top-bar a:hover{
+    color:#fff;
+    background:var(--accent);
+}
+
+/* --- TOP MENU --- */
+.top-menu-container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0px 40px;
+    position:sticky;
+    top:0;
+    z-index:99;
+    background:#f1f1f1;
+    border-bottom:1px solid #ddd;
+}
+.logo-in-menu{
+    background:#f1f1f1;
+    padding:20px 20px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:30px;
+    box-sizing:border-box;
+
+}
+.logo-in-menu img{
+    max-height:85px;
+    display:block;
+    object-fit:contain;
+    margin-top:-30px;
+    margin-left: -15px; /* вліво */
+
+}
+.logo-in-menu img:hover{
+    transform:scale(1.05);
+}
+.top-menu{
+    display:flex;
+    gap:15px;
+}
+.top-menu a{
+    position:relative;
+    padding:6px 15px;
+    font-weight:600;
+    font-size:14px;
+    text-decoration:none;
+    border-radius:50px;
+    background:#eee;
+    color:#111;
+    transition:0.4s;
+    display:flex;
+    align-items:center;
+}
+.top-menu a img{
+    height:16px;
+    margin-right:4px;
+}
+.top-menu a:hover{
+    color:var(--accent);
+}
+.top-menu a::after{
+    content:'';
+    position:absolute;
+    width:0;
+    height:2px;
+    bottom:0;
+    left:50%;
+    background:var(--accent);
+    transition:0.4s;
+    border-radius:2px;
+}
+.top-menu a:hover::after{
+    width:100%;
+    left:0;
+}
+.top-menu a.special{
+    background:transparent;
+    color:#111;
+}
+.top-menu a.special:hover{
+    color:var(--accent);
+}
+
+/* --- SEARCH --- */
+.search-container input{
+    padding:8px 20px;
+    border-radius:50px;
+    border:1px solid #ccc;
+    outline:none;
+    transition:0.3s;
+    font-size:14px;
+    background:#fff;
+    color:#111;
+}
+.search-container input:focus{
+    box-shadow:0 0 10px var(--accent);
+}
+
+/* --- HERO --- */
+.hero{
+    position:relative;
+    height:90vh;
+    overflow:hidden;
+}
+.hero img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition: transform 1.5s ease, filter 1.5s ease;
+}
+.hero:hover img{
+    transform:scale(1.05);
+    filter: brightness(0.85);
+}
+.hero-text{
+    position:absolute;
+    bottom:80px;
+    left:60px;
+    color:#fff;
+    text-shadow:0 3px 10px rgba(0,0,0,0.4);
+}
+.hero-text h1{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:110px;
+    letter-spacing:4px;
+    margin:0;
+}
+.hero-text p{
+    font-size:22px;
+    letter-spacing:3px;
+    margin-top:-10px;
+    opacity:0.9;
+}
+.hero-text .btn{
+    margin-top:20px;
+    padding:14px 35px;
+    background:var(--accent);
+    color:#111;
+    font-weight:700;
+    border-radius:50px;
+    text-decoration:none;
+    display:inline-block;
+    transition:0.4s;
+    font-size:16px;
+}
+.hero-text .btn:hover{
+    background:#fff;
+    transform:translateY(-5px);
+    color:var(--accent);
+}
+
+/* --- CATEGORIES --- */
+.categories{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(350px,1fr));
+    gap:30px;
+    padding:50px 40px;
+    background:#f9f9f9;
+}
+.category{
+    position:relative;
+    border-radius:20px;
+    overflow:hidden;
+    height:500px;
+    cursor:pointer;
+    transition:0.5s;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.category img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#fff;
+    transition:0.5s;
+}
+.category:hover img{
+    transform:scale(1.05);
+    filter: brightness(0.9);
+}
+.category h3{
+    position:absolute;
+    bottom:20px;
+    left:20px;
+    color:#fff;
+    font-size:26px;
+    background:rgba(0,0,0,0.5);
+    padding:10px 20px;
+    border-radius:30px;
+    font-weight:700;
+    transition:0.3s;
+}
+.category:hover h3{
+    background:var(--accent);
+    color:#111;
+}
+
+/* --- PRODUCTS --- */
+.products{
+    padding:50px 40px;
+    background:#fff;
+}
+.products h2{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:42px;
+    letter-spacing:2px;
+}
+.product-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:30px;
+}
+.card{
+    background:#fff;
+    border-radius:18px;
+    text-align:center;
+    transition:0.4s;
+    box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    position:relative;
+    overflow:hidden;
+    cursor:pointer;
+    opacity:0;
+    transform:translateY(30px);
+    animation:fadeUp 0.6s forwards;
+}
+@keyframes fadeUp{
+    to{ opacity:1; transform:translateY(0);}
+}
+.card:hover{
+    transform:translateY(-10px) scale(1.02);
+    box-shadow:0 25px 40px rgba(0,0,0,0.15);
+}
+.badge{
+    position:absolute;
+    top:12px;
+    left:12px;
+    background:#111;
+    color:#fff;
+    padding:5px 12px;
+    font-size:11px;
+    border-radius:30px;
+    letter-spacing:1px;
+    z-index:2;
+}
+.sale{
+    position:absolute;
+    top:12px;
+    left:70px;
+    background:var(--accent);
+    color:#111;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    z-index:2;
+}
+.wishlist{
+    position:absolute;
+    top:12px;
+    right:12px;
+    background:#fff;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 5px 10px rgba(0,0,0,0.1);
+    transition:0.2s;
+    z-index:2;
+}
+.wishlist:hover{
+    background:#111;
+    color:#fff;
+}
+.card img{
+    width:100%;
+    height:420px;
+    object-fit:cover;
+    border-radius:14px;
+    transition:0.6s ease;
+}
+.card img.hidden{
+    opacity:0;
+    position:absolute;
+    top:0;
+    left:0;
+}
+.card img.visible{
+    opacity:1;
+    position:relative;
+}
+.quick-add{
+    position:absolute;
+    bottom:-55px;
+    left:0;
+    width:100%;
+    background:#111;
+    color:#fff;
+    padding:14px;
+    text-align:center;
+    transition:0.3s;
+    font-weight:600;
+    cursor:pointer;
+}
+.card:hover .quick-add{
+    bottom:0;
+}
+.card h3{
+    margin:12px 0 6px 0;
+    font-size:18px;
+    font-weight:700;
+}
+.price{
+    color:var(--accent);
+    font-weight:bold;
+    margin-bottom:10px;
+    font-size:18px;
+    letter-spacing:1px;
+}
+.btn{
+    display:inline-block;
+    padding:10px 18px;
+    margin:5px;
+    background:var(--accent);
+    color:#111;
+    border-radius:50px;
+    font-weight:700;
+    text-decoration:none;
+    border:none;
+    cursor:pointer;
+}
+.btn:hover{
+    background:#111;
+    color:#fff;
+}
+
+/* --- RESPONSIVE --- */
+@media(max-width:900px){ .product-row{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:500px){ .product-row{ grid-template-columns:1fr; } }
+
+/* --- TOAST --- */
+#toast{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:var(--accent);
+    color:#111;
+    padding:15px 25px;
+    border-radius:50px;
+    font-weight:700;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    display:none;
+    z-index:9999;
+    transition:0.4s;
+}
+.cart-bounce{
+    animation:cartBounce 0.4s ease;
+}
+@keyframes cartBounce{
+    0%{ transform:scale(1); }
+    50%{ transform:scale(1.3); }
+    100%{ transform:scale(1); }
+}
+
+/* --- Слайдер для карток --- */
+.card .arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:35px;
+    height:35px;
+    background:rgba(0,0,0,0.5);
+    color:#fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+    opacity:0;
+    transition:0.3s;
+    z-index:5;
+}
+.card:hover .arrow{ opacity:1; }
+.card .arrow.left{ left:10px; }
+.card .arrow.right{ right:10px; }
+
+    .site-footer{
+    background:#111; /* чорний футер */
+    color:#fff;
+    padding:60px 40px;
+    text-align:center;
+    display:flex;
+    flex-direction: column;
+    gap:20px;
+}
+.site-footer .footer-logo{
+    font-family:'Bebas Neue', sans-serif;
+    font-size:36px;
+    letter-spacing:4px;
+}
+.site-footer .footer-links{
+    display:flex;
+    justify-content:center;
+    gap:30px;
+}
+.site-footer .footer-links a{
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+.site-footer .footer-links a:hover{
+    color: var(--accent); /* акцентний колір бренду */
+}
+.site-footer .footer-social{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+}
+.site-footer .footer-social img{
+    width:24px;
+    height:24px;
+    transition:0.3s;
+}
+.site-footer .footer-social img:hover{
+    transform:scale(1.2);
+}
+.site-footer .footer-copy{
+    font-size:12px;
+    opacity:0.6;
+}
+
+    /* --- Легкий блиск на картках при наведенні --- */
+.card {
+    position: relative; /* щоб ::before працював */
+    overflow: hidden;   /* обрізає псевдоелемент по межах картки */
+}
+
+.card:hover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -75%; /* старт за межами лівого краю */
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 80%);
+    transform: skewX(-25deg);
+    animation: shine 1s forwards;
+    pointer-events: none; /* щоб не перекривало клік */
+}
+
+@keyframes shine {
+    100% { left: 125%; } /* рухаємо блиск вправо через картку */
+}
+
+    .sidebar{
+    position:fixed;
+    top:0;
+    left:-300px; /* схований за межами екрану */
+    width:250px;
+    height:100%;
+    background:#f1f1f1;
+    box-shadow:2px 0 10px rgba(0,0,0,0.1);
+    padding:20px;
+    transition:0.4s;
+    z-index:999;
+}
+.sidebar ul{
+    list-style:none;
+    padding:0;
+}
+.sidebar ul li{
+    margin:20px 0;
+}
+.sidebar ul li a{
+    text-decoration:none;
+    color:#111;
+    font-weight:600;
+}
+
+    .overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.2);
+    opacity:0;
+    pointer-events:none;
+    transition:0.4s;
+    z-index:998;
+}
+.overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+
+/* --- Сайдбар --- */
+.sidebar{
+    position: fixed;
+    top:0;
+    left: -300px; /* схований за екраном */
+    width:250px;
+    height:100%;
+    background:#111; /* чорний фон сайдбару */
+    padding:30px 20px;
+    transition:0.4s;
+    z-index:999;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+}
+
+.sidebar ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.sidebar ul li{
+    margin:20px 0;
+}
+
+/* стиль для всіх посилань в сайдбарі */
+.sidebar ul li a{
+    display:block;
+    width:100%;
+    padding:12px 20px;
+    text-align:left;
+    text-decoration:none;
+    font-family:'Poppins', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    color:#fff; /* білий текст */
+    letter-spacing:0.5px;
+    position:relative;
+    border-radius:6px;
+    transition:0.3s;
+    background:transparent; /* фон прозорий для чистого стилю Nike */
+}
+
+/* Hover ефект Nike */
+.sidebar ul li a::after{
+    content:'';
+    position:absolute;
+    bottom:0;
+    left:50%;
+    width:0;
+    height:2px;
+    background:#fff; /* біле підкреслення */
+    transition:0.3s;
+    transform:translateX(-50%);
+}
+
+.sidebar ul li a:hover::after{
+    width:100%;
+    left:0;
+}
+
+.sidebar ul li a:hover{
+    color:#fff; /* акцентний колір при наведенні */
+    background:rgba(255,255,255,0.05); /* легкий ефект підсвітки */
+}
+/* Фон після другої карти */
+.after-products-bg {
+    width: 100%;
+    height: 500px; /* можеш змінити висоту */
+    background-image: url('https://i.postimg.cc/SNs35mm2/photo-2026-03-27-21-14-45.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* паралакс ефект при скролі */
+    margin-top: 50px; /* відступ зверху */
+}
+
+
+
+</style>
+<script>
+// Анімація появи елементів
+function revealOnScroll(){
+    let elements = document.querySelectorAll('.reveal');
+    elements.forEach(el=>{
+        let windowHeight = window.innerHeight;
+        let elementTop = el.getBoundingClientRect().top;
+        if(elementTop < windowHeight - 100){
+            el.classList.add('active');
+        }
+    });
+}
+window.addEventListener('scroll', revealOnScroll);
+
+// Quick Add
+function quickAdd(productId){
+    fetch(`/quick_add/${productId}`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({quantity:1})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.success){
+            let toast = document.getElementById('toast');
+            toast.textContent="Товар доданий у корзину!";
+            toast.style.display="block";
+            setTimeout(()=>{ toast.style.display="none"; },3000);
+            const cartCountElem = document.getElementById('cart-count');
+            if(cartCountElem) cartCountElem.textContent=data.cart_count;
+            const cartLink=document.getElementById('cart-link');
+            if(cartLink){
+                cartLink.classList.add('cart-bounce');
+                setTimeout(()=>{cartLink.classList.remove('cart-bounce');},350);
+            }
+        }
+    })
+    .catch(err=>console.error(err));
+}
+
+// Слайдер для карток
+document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.product-images').forEach(card=>{
+        const images = card.querySelectorAll('img');
+        if(images.length <= 1) return;
+        let current = 0;
+        const showImage = (index)=>{
+            images.forEach((img,i)=>{
+                img.classList.toggle('visible', i===index);
+                img.classList.toggle('hidden', i!==index);
+            });
+        };
+        const leftArrow = card.querySelector('.arrow.left');
+        const rightArrow = card.querySelector('.arrow.right');
+        leftArrow.addEventListener('click', e=>{
+            e.stopPropagation();
+            current = (current - 1 + images.length) % images.length;
+            showImage(current);
+        });
+        rightArrow.addEventListener('click', e=>{
+            e.stopPropagation();
+            current = (current + 1) % images.length;
+            showImage(current);
+        });
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const logo = document.getElementById('logo');
+    const sidebar = document.getElementById('sidebar');
+
+    let timeout;
+
+    function openSidebar() {
+        clearTimeout(timeout);
+        sidebar.style.left = '0';
+    }
+
+    function closeSidebar() {
+        timeout = setTimeout(() => {
+            sidebar.style.left = '-300px';
+        }, 200);
+    }
+
+    logo.addEventListener('mouseenter', openSidebar);
+    logo.addEventListener('mouseleave', closeSidebar);
+
+    sidebar.addEventListener('mouseenter', openSidebar);
+    sidebar.addEventListener('mouseleave', closeSidebar);
+});
+
+
+
+
+
+</script>
+
+
+
+
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="top-bar-links">
+        <a href="#">Вхід</a>
+        <a href="#">Реєстрація</a>
+        <a id="cart-link" href="{{ url_for('view_cart') }}">
+            Корзина (<span id="cart-count">{{ cart_count }}</span>)
+        </a>
+    </div>
+</div>
+
+<div class="top-menu-container">
+    <div class="logo-in-menu" id="logo">
+        <img src="https://i.postimg.cc/pLwwXFBY/photo-2026-03-24-13-52-43-removebg-preview.png">
+    </div>
+
+    <!-- Сайдбар -->
+<div class="sidebar" id="sidebar">
+    <ul>
+        <li><a href="{{ url_for('index') }}">Головна</a></li>
+        <li><a href="{{ url_for('catalog') }}">Каталог</a></li>
+        <li><a href="{{ url_for('contacts') }}">Контакти</a></li>
+    </ul>
+</div>
+
+
+    <div class="top-menu">
+        <a href="{{ url_for('category_page', category_name='hoodie') }}" class="special"><img src="">zip-hoodie</a>
+        <a href="{{ url_for('category_page', category_name='tshirt') }}" class="special"><img src="https://img.icons8.com/ios-glyphs/16/000000/t-shirt.png">T-Shirts</a>
+        <a href="{{ url_for('category_page', category_name='jeans') }}" class="special"><img src="https://img.icons8.com/ios-glyphs/16/000000/jeans.png">Jeans</a>
+        <a href="#"><img src="https://img.icons8.com/ios-glyphs/16/000000/shirt.png">general</a>
+    </div>
+    <div class="search-container">
+        <input type="text" placeholder="Пошук...">
+    </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+    <img src="https://i.postimg.cc/sf6sqjKC/photo-2026-03-24-14-21-58.jpg">
+    <div class="hero-text reveal">
+        <h1>7TH</h1>
+        <p>DEFINE YOUR STREET</p>
+        <a href="#" class="btn">SHOP NOW</a>
+    </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="categories reveal">
+    <a href="{{ url_for('category_page', category_name='jeans') }}" class="category">
+        <img src="https://img.kwcdn.com/product/fancy/9f838c94-4e68-49a8-94ce-d489c817df4d.jpg">
+        <h3>Jeans</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='tshirt') }}" class="category">
+        <img src="https://i.postimg.cc/k52H5qFS/avif.avif">
+        <h3>T-Shirts</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='hoodie') }}" class="category">
+        <img src="https://i.postimg.cc/0NSLf9M2/avif.avif">
+        <h3>Hoodies</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='belt') }}" class="category">
+        <img src="https://i.postimg.cc/mrM5MRhQ/avif.avif">
+        <h3>Belt</h3>
+    </a>
+</div>
+
+<!-- PRODUCTS -->
+<div class="products reveal">
+    <h2>POPULAR PICKS</h2>
+    <div class="product-row">
+        {% for product in products [:9]%}
+
+{% if loop.index == 7 %}
+</div>
+</div>
+
+<!-- CATEGORY BLOCK (як вгорі) -->
+<div class="categories">
+    <a href="{{ url_for('category_page', category_name='Hood Pass') }}" class="category">
+        <img src="https://i.postimg.cc/W15YTxXM/avif.avif">
+        <h3>Hood Pass</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='accessories') }}" class="category">
+        <img src="https://i.postimg.cc/dVFRpnF4/avif.avif">
+        <h3>accessories</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='hoodie') }}" class="category">
+        <img src="https://i.postimg.cc/0NSLf9M2/avif.avif">
+        <h3>Hoodies</h3>
+    </a>
+    <a href="{{ url_for('category_page', category_name='belt') }}" class="category">
+        <img src="https://i.postimg.cc/mrM5MRhQ/avif.avif">
+        <h3>Belt</h3>
+    </a>
+</div>
+
+<!-- Фон після другої карти товарів -->
+<div class="after-products-bg"></div>
+
+<div class="products">
+<div class="product-row">
+{% endif %}
+
+<div class="card">
+
+            <div class="badge">NEW</div>
+            <div class="sale">-20%</div>
+            <div class="wishlist">♡</div>
+            <a href="{{ url_for('product_page', product_id=product.id) }}" class="product-images">
+                {% if product.img %}
+                    <img src="{{ product.img[0] }}" class="visible">
+                    {% if product.img|length > 1 %}
+                        {% for i in range(1, product.img|length) %}
+                            <img src="{{ product.img[i] }}" class="hidden">
+                        {% endfor %}
+                        <div class="arrow left">&#10094;</div>
+                        <div class="arrow right">&#10095;</div>
+                    {% endif %}
+                {% endif %}
+            </a>
+            <h3>{{ product.name }}</h3>
+            <p class="price">{{ product.price }} грн</p>
+            <div class="quick-add" onclick="quickAdd({{ product.id }})">Quick add</div>
+        </div>
+        {% endfor %}
+
+
+</div>
+</div>
+
+<footer class="site-footer">
+    <div class="footer-logo">7TH</div>
+    <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy</a>
+    </div>
+    <div class="footer-social">
+        <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/instagram-new.png"/></a>
+        <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/facebook-new.png"/></a>
+        <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/tiktok.png"/></a>
+    </div>
+    <div class="footer-copy">© 2026 7TH. All rights reserved.</div>
+</footer>
+
+<div id="toast"></div>
+</body>
+</html>

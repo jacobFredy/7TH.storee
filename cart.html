@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cart-bg">
+    <div class="container my-5">
+        <h2 class="mb-4 text-center premium-title">🛒 Ваша корзина</h2>
+
+        {% if cart_items %}
+        <div class="cart-grid">
+            {% for item in cart_items %}
+            <div class="cart-card position-relative">
+                <!-- Кнопка видалення -->
+                <form method="post" action="/update/{{ item.product.id }}" class="remove-form" style="position:absolute; top:10px; right:10px;">
+                    <input type="hidden" name="action" value="remove">
+                    <button type="submit" class="remove-btn">×</button>
+                </form>
+
+                <img src="{{ item.product.images[0] }}" class="product-img hover-zoom" alt="{{ item.product.name }}">
+                <h5 class="text-center mt-2 premium-text">{{ item.product.name }}</h5>
+                <p class="text-muted text-center">{{ item.product.price }} грн</p>
+
+                <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                    <button class="btn qty-btn" data-id="{{ item.product.id }}" data-action="minus">−</button>
+                    <span class="qty-display" id="qty-{{ item.product.id }}">{{ item.qty }}</span>
+                    <button class="btn qty-btn" data-id="{{ item.product.id }}" data-action="plus">+</button>
+                </div>
+
+                <div class="fw-bold text-center subtotal" id="subtotal-{{ item.product.id }}">{{ item.subtotal }} грн</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="summary-card mt-5 p-4 shadow-sm text-center">
+            <h4 class="mb-4 premium-text">Разом: <span id="total-sum">{{ total }}</span> грн</h4>
+        </div>
+
+        <div class="checkout-bottom">
+            <a href="/checkout" class="btn btn-premium">ОФОРМИТИ ЗАМОВЛЕННЯ</a>
+        </div>
+
+        {% else %}
+        <div class="text-center py-5">
+            <p class="fs-5 text-muted premium-text">Ваша корзина порожня</p>
+            <a href="/" class="btn btn-dark btn-lg">Повернутися до покупок</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Live update qty
+document.querySelectorAll('.qty-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const pid = this.dataset.id;
+        const action = this.dataset.action;
+        fetch(`/update/${pid}`, {
+            method: "POST",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({ action: action })
+        }).then(() => location.reload());
+    });
+});
+</script>
+
+<style>
+.cart-bg {
+    position: relative;
+    background-color: #f8f8f8;
+    padding: 50px 0;
+}
+
+.cart-bg::before {
+    content: "";
+    background: url('https://i.postimg.cc/pLwwXFBY/photo-2026-03-24-13-52-43-removebg-preview.png') no-repeat center center;
+    background-size: 200px auto;
+    opacity: 0.05;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+}
+
+.cart-bg .container { position: relative; z-index: 1; }
+
+.cart-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 2%;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.cart-card {
+    flex: 0 0 32%;
+    max-width: 32%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+.cart-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.15); }
+
+.product-img { width: 100%; height: 220px; object-fit: contain; border-radius: 8px; transition: transform 0.3s ease; }
+.hover-zoom:hover { transform: scale(1.05); }
+
+.qty-btn {
+    width: 45px; height: 45px;
+    font-size: 1.3rem; font-weight: bold;
+    border: 2px solid #111; border-radius: 6px;
+    background-color: #fff; color: #111;
+    transition: all 0.2s;
+}
+.qty-btn:hover { background-color: #111; color: #fff; }
+
+.qty-display { min-width: 35px; text-align: center; font-weight: bold; }
+
+.summary-card {
+    border-radius: 12px; background-color: #f8f8f8;
+}
+.summary-card h4 { font-weight: bold; }
+
+.subtotal { margin-top: 5px; font-weight: bold; }
+
+.premium-text { font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: 0.5px; color: #111; }
+.premium-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 2px; }
+
+.checkout-bottom {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: 15px 0;
+    background-color: #f8f8f8;
+    z-index: 10;
+    text-align: center;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+}
+
+.btn-premium {
+    display: block;
+    width: 95%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 18px 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(90deg, #111 0%, #333 100%);
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+.btn-premium:hover { background: linear-gradient(90deg, #333 0%, #111 100%); transform: scale(1.02); }
+
+/* Кнопка видалення просто хрестик */
+.remove-btn {
+    font-size: 1.2rem;
+    color: #111;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.remove-btn:hover { color: #555; }
+
+@media(max-width: 1200px){ .cart-card { flex: 0 0 48%; max-width: 48%; } }
+@media(max-width: 768px){ .cart-card { flex: 0 0 100%; max-width: 100%; } }
+
+</style>
+{% endblock %}

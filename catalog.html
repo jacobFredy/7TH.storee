@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>7TH - Каталог</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+    --primary:#111;
+    --accent:#c9a96e;
+    --bg:#fff;
+    --text:#111;
+}
+
+/* --- BODY --- */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin:0;
+    padding:0;
+    background:#f9f9f9;
+    color:var(--text);
+}
+
+/* --- TOP BAR --- */
+.top {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 40px;
+    background:var(--primary);
+    color:#fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.top a {
+    color:#fff;
+    margin-left:20px;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.top a:hover {
+    color:var(--accent);
+}
+
+/* --- CONTAINER --- */
+.container {
+    display:flex;
+    padding:40px;
+    gap:20px;
+}
+
+/* --- FILTERS --- */
+.filters {
+    width:220px;
+}
+
+.filters h3 {
+    margin-bottom:15px;
+}
+
+.filters a {
+    display:block;
+    margin-bottom:8px;
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.filters a:hover {
+    color:var(--accent);
+}
+
+/* --- CATALOG --- */
+.catalog {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 картки в ряд */
+    gap: 30px;
+    flex:1;
+}
+
+/* --- CARD --- */
+.card {
+    position: relative;
+    background:var(--bg);
+    border-radius:12px;
+    overflow: hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    height: 500px; /* подовжена картка */
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+}
+
+.card img {
+    width:100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    display:block;
+}
+
+.card:hover img {
+    transform: scale(1.08) rotate(0.5deg); /* трохи обертається на hover */
+}
+
+/* --- INFO --- */
+.card .info {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.4s ease;
+}
+
+.card .info h3 {
+    margin:5px 0;
+    font-size:18px;
+    font-weight:600;
+    color:var(--primary);
+}
+
+.card .price {
+    font-weight:bold;
+    color:var(--accent);
+    margin-bottom:8px;
+}
+
+.card .btn {
+    display:inline-block;
+    padding:8px 16px;
+    background:var(--accent);
+    color:var(--primary);
+    text-decoration:none;
+    border-radius:6px;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.card .btn:hover {
+    background:#b38f5c;
+    color:#fff;
+}
+
+/* --- RESPONSIVE --- */
+@media screen and (max-width:1024px) {
+    .catalog {
+        grid-template-columns: repeat(2, 1fr); /* 2 картки в ряд на планшеті */
+    }
+}
+
+@media screen and (max-width:600px) {
+    .container {
+        flex-direction: column;
+    }
+    .filters {
+        width:100%;
+        display:flex;
+        justify-content:space-around;
+        margin-bottom:20px;
+    }
+    .catalog {
+        grid-template-columns: 1fr; /* 1 картка на мобільних */
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="top">
+    <div><b>7TH</b></div>
+    <div>
+        <a href="{{ url_for('index') }}">Головна</a>
+        <a href="{{ url_for('catalog') }}">Каталог</a>
+        <a href="{{ url_for('contacts') }}">Контакти</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ФІЛЬТРИ -->
+    <div class="filters">
+        <h3>Категорії</h3>
+        <a href="{{ url_for('catalog') }}">Всі</a>
+        <a href="{{ url_for('category_page', category_name='hoodie') }}">Hoodies</a>
+        <a href="{{ url_for('category_page', category_name='tshirt') }}">T-Shirts</a>
+        <a href="{{ url_for('category_page', category_name='jeans') }}">Jeans</a>
+    </div>
+
+    <!-- ТОВАРИ -->
+    <div class="catalog">
+        {% for product in products %}
+        <div class="card">
+            <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+            <div class="info">
+                <h3>{{ product.name }}</h3>
+                <div class="price">{{ product.price }} грн</div>
+                <a href="{{ url_for('product_page', product_id=product.id) }}" class="btn">Детальніше</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+</body>
+</html>

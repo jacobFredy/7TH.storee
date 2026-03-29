@@ -1,0 +1,130 @@
+<!-- Початок category_page.hltm -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>{{ category_name|capitalize }}</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary:#111;
+    --accent:#c9a96e;
+    --bg:#fff;
+    --text:#111;
+}
+/* --- BODY --- */
+body{margin:0;font-family:'Poppins',sans-serif;background:var(--bg);color:var(--text);scroll-behavior:smooth;}
+/* --- BREADCRUMB --- */
+.breadcrumb{padding:20px 40px;font-size:14px;color:#777;}
+.breadcrumb span{color:#111;font-weight:600;}
+/* --- LAYOUT --- */
+.category-layout{display:flex;gap:40px;padding:0 40px 40px 40px;}
+/* --- FILTERS --- */
+.filters{width:240px;position:sticky;top:40px;height:fit-content;background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 15px rgba(0,0,0,0.05);}
+.filter-block{margin-bottom:25px;}
+.filter-block label{display:block;margin-bottom:6px;cursor:pointer;}
+/* --- PRODUCTS --- */
+.category-products{flex:1;}
+.category-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;position:sticky;top:0;background:inherit;z-index:5;padding:15px 0;}
+.category-top h2{letter-spacing:3px;font-weight:800;}
+.category-top select{border-radius:50px;padding:10px 18px;border:1px solid #ddd;background:#fff;font-weight:600;cursor:pointer;}
+/* --- GRID --- */
+.products-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:30px;}
+/* --- CARD --- */
+.card{background:#fff;border-radius:18px;text-align:center;transition:0.4s;box-shadow:0 5px 15px rgba(0,0,0,0.05);position:relative;overflow:hidden;cursor:pointer;opacity:0;transform:translateY(30px);animation:fadeUp 0.6s forwards;}
+.products-grid .card:nth-child(1){animation-delay:0.05s;}
+.products-grid .card:nth-child(2){animation-delay:0.1s;}
+.products-grid .card:nth-child(3){animation-delay:0.15s;}
+.products-grid .card:nth-child(4){animation-delay:0.2s;}
+.products-grid .card:nth-child(5){animation-delay:0.25s;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+.card:hover{transform:translateY(-10px) scale(1.02);box-shadow:0 25px 40px rgba(0,0,0,0.15);}
+.card::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top, rgba(0,0,0,0.25), transparent);opacity:0;transition:0.4s;}
+.card:hover::after{opacity:1;}
+.badge{position:absolute;top:12px;left:12px;background:#111;color:#fff;padding:5px 12px;font-size:11px;border-radius:30px;letter-spacing:1px;z-index:2;}
+.sale{position:absolute;top:12px;left:70px;background:var(--accent);color:#111;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;z-index:2;box-shadow:0 5px 15px rgba(201,169,110,0.5);}
+.wishlist{position:absolute;top:12px;right:12px;background:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 5px 10px rgba(0,0,0,0.1);transition:0.2s;z-index:2;}
+.wishlist:hover{background:#111;color:#fff;transform:scale(1.1);}
+.card img{width:100%;height:420px;object-fit:cover;border-radius:14px;transition:0.6s ease;}
+.card:hover img{transform:scale(1.05);}
+.quick-add{position:absolute;bottom:-55px;left:0;width:100%;background:#111;color:#fff;padding:14px;text-align:center;transition:0.3s;font-weight:600;z-index:4;}
+.card:hover .quick-add{bottom:0;}
+.card h3{margin:12px 0 6px 0;font-size:18px;font-weight:700;}
+.price{color:var(--accent);font-weight:bold;margin-bottom:10px;font-size:18px;}
+.btn{display:inline-block;padding:10px 18px;background:var(--accent);color:#111;border-radius:50px;font-weight:700;border:none;cursor:pointer;}
+.btn:hover{background:#111;color:#fff;}
+@media(max-width:900px){.products-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:500px){.products-grid{grid-template-columns:1fr;}}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--accent);color:#111;padding:15px 25px;border-radius:50px;font-weight:700;box-shadow:0 5px 15px rgba(0,0,0,0.2);display:none;z-index:9999;transition:0.4s;}
+.cart-bounce{animation:cartBounce 0.4s ease;}
+@keyframes cartBounce{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+</style>
+
+<script>
+function quickAdd(productId){
+    fetch(`/quick_add/${productId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({quantity:1})})
+    .then(res=>res.json())
+    .then(data=>{
+        if(data.success){
+            let toast=document.getElementById('toast');
+            toast.textContent="Товар доданий у корзину!";
+            toast.style.display="block";
+            setTimeout(()=>{toast.style.display="none";},3000);
+            const cartCountElem=document.getElementById('cart-count');
+            if(cartCountElem) cartCountElem.textContent=data.cart_count;
+        }
+    }).catch(err=>console.error(err));
+}
+</script>
+</head>
+
+<body>
+<div class="breadcrumb">
+Home / {{ category_name }} <span>({{ products|length }} items)</span>
+</div>
+
+<div class="category-layout">
+<aside class="filters">
+<h3>FILTER</h3>
+</aside>
+
+<section class="category-products">
+<div class="category-top">
+<h2>{{ category_name|capitalize }}</h2>
+<select>
+<option>Сортування</option>
+<option>За ціною ↑</option>
+<option>За ціною ↓</option>
+</select>
+</div>
+
+<div class="products-grid">
+{% for product in products %}
+<div class="card" onclick="window.location.href='{{ url_for('product_page', product_id=product.id) }}'">
+
+{% if product.images %}
+<img src="{{ product.images[0] }}">
+{% endif %}
+<h3>{{ product.name }}</h3>
+<p class="price">{{ product.price }} грн</p>
+
+<div class="badge">NEW</div>
+<div class="sale">-20%</div>
+<div class="wishlist" onclick="event.stopPropagation();">♡</div>
+<div class="quick-add" onclick="event.stopPropagation(); quickAdd({{ product.id }})">Quick Add</div>
+
+<form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+<button class="btn">В корзину</button>
+</form>
+
+</div>
+{% endfor %}
+</div>
+</section>
+</div>
+
+<div id="toast"></div>
+</body>
+</html>

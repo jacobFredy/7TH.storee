@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="checkout-bg">
+  <div class="container py-5">
+
+    {% if success %}
+    <div class="success-box text-center animate-success">
+      <h2>✅ Замовлення оформлено!</h2>
+      <p>Дякуємо, ми скоро з вами зв'яжемось</p>
+
+      <p><strong>Ім'я:</strong> {{ name }}</p>
+      <p><strong>Телефон:</strong> {{ phone }}</p>
+      <p><strong>Місто:</strong> {{ city }}</p>
+      <p><strong>Відділення:</strong> {{ warehouse }}</p>
+      <p><strong>Сума:</strong> {{ total }} грн</p>
+
+      <a href="/" class="btn-black mt-4 hover-scale">На головну</a>
+    </div>
+
+    {% else %}
+    <div class="checkout-grid">
+      <!-- Форма -->
+      <div class="checkout-left animate-form">
+        <h2 class="checkout-title">Оформлення замовлення</h2>
+
+        <form method="post">
+          <div class="input-group">
+            <input name="name" placeholder=" " required>
+            <label>Ім'я</label>
+          </div>
+
+          <div class="input-group">
+            <input name="phone" placeholder=" " required>
+            <label>Телефон</label>
+          </div>
+
+          <div class="input-group">
+            <input id="city" name="city" placeholder=" " autocomplete="off" required>
+            <label>Місто</label>
+            <div class="autocomplete-list" id="city-list"></div>
+          </div>
+
+          <div class="input-group">
+            <input id="warehouse" name="warehouse" placeholder=" " autocomplete="off" required>
+            <label>Відділення Нової Пошти</label>
+            <div class="autocomplete-list" id="warehouse-list"></div>
+          </div>
+
+          <h5 class="mt-4">Оплата</h5>
+          <div class="payment-box active">
+            <input type="radio" name="payment" value="cod" checked hidden>
+            Накладений платіж
+          </div>
+          <div class="payment-box">
+            <input type="radio" name="payment" value="card" hidden>
+            Оплата карткою
+          </div>
+
+          {% if single %}
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          {% endif %}
+
+          <button type="submit" class="btn-black w-100 mt-4 hover-scale">Підтвердити замовлення</button>
+        </form>
+
+        <!-- LiqPay -->
+        <form method="POST" action="{{ url_for('liqpay_pay') }}" class="mt-3">
+          {% if single %}
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          {% endif %}
+          <button type="submit" class="btn btn-warning w-100 hover-scale">Оплатити LiqPay</button>
+        </form>
+
+        <!-- Stripe -->
+        <button id="stripe-button" class="btn btn-primary w-100 mt-3 hover-scale">Оплатити карткою (Stripe)</button>
+      </div>
+
+      <!-- Підсумок -->
+      <div class="checkout-right animate-summary">
+        <h4>Ваше замовлення</h4>
+
+        {% if single %}
+        <div class="summary-row">
+          <span>{{ product.name }}</span>
+          <span>{{ product.price }} грн</span>
+        </div>
+        {% else %}
+        {% for item in cart_items %}
+        <div class="summary-row">
+          <span>{{ item.product.name }} ×{{ item.qty }}</span>
+          <span>{{ item.subtotal }} грн</span>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="summary-total">
+          <span>Всього</span>
+          <span>{{ total }} грн</span>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Stripe -->
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+const stripe = Stripe('{{ stripe_public_key }}');
+document.getElementById("stripe-button").addEventListener("click", function(){
+  fetch("/create-checkout-session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    {% if single %}
+    body: JSON.stringify({ product_id: {{ product.id }} })
+    {% else %}
+    body: JSON.stringify({})
+    {% endif %}
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    stripe.redirectToCheckout({ sessionId: data.id });
+  });
+});
+</script>
+
+<!-- Нова пошта автопошук -->
+<script>
+const apiKey = "459ee7f5ba619794395b6ec259611c7a";
+const cityInput = document.getElementById("city");
+const warehouseInput = document.getElementById("warehouse");
+const cityList = document.getElementById("city-list");
+const warehouseList = document.getElementById("warehouse-list");
+let selectedCityRef = "";
+
+cityInput.addEventListener("input", function(){
+  if(cityInput.value.length<2) return;
+  fetch("https://api.novaposhta.ua/v2.0/json/",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      apiKey:apiKey,modelName:"Address",calledMethod:"searchSettlements",
+      methodProperties:{CityName:cityInput.value,Limit:5}
+    })
+  }).then(res=>res.json()).then(data=>{
+    cityList.innerHTML="";
+    if(!data.data[0]) return;
+    data.data[0].Addresses.forEach(city=>{
+      const div=document.createElement("div");
+      div.className="autocomplete-item";
+      div.textContent=city.Present;
+      div.onclick=()=>{
+        cityInput.value=city.Present;
+        selectedCityRef=city.DeliveryCity;
+        cityList.innerHTML="";
+        warehouseInput.value="";
+      };
+      cityList.appendChild(div);
+    });
+  });
+});
+
+warehouseInput.addEventListener("input", function(){
+  if(!selectedCityRef) return;
+  fetch("https://api.novaposhta.ua/v2.0/json/",{
+    method:"POST",
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      apiKey:apiKey,modelName:"Address",calledMethod:"getWarehouses",
+      methodProperties:{CityRef:selectedCityRef,FindByString:warehouseInput.value,Limit:5}
+    })
+  }).then(res=>res.json()).then(data=>{
+    warehouseList.innerHTML="";
+    data.data.forEach(wh=>{
+      const div=document.createElement("div");
+      div.className="autocomplete-item";
+      div.textContent=wh.Description;
+      div.onclick=()=>{
+        warehouseInput.value=wh.Description;
+        warehouseList.innerHTML="";
+      };
+      warehouseList.appendChild(div);
+    });
+  });
+});
+
+// Вибір оплати
+document.querySelectorAll('.payment-box').forEach(box=>{
+  box.addEventListener('click',()=>{
+    document.querySelectorAll('.payment-box').forEach(b=>b.classList.remove('active'));
+    box.classList.add('active');
+    box.querySelector('input').checked=true;
+  });
+});
+</script>
+
+<style>
+/* Основні стилі Nike-подібного checkout */
+.checkout-bg{background:#f7f7f7;min-height:100vh;}
+.checkout-grid{display:flex;gap:60px;}
+.checkout-left{flex:1;}
+.checkout-right{width:380px;background:#fff;padding:30px;border-radius:12px;position:sticky;top:120px;box-shadow:0 10px 30px rgba(0,0,0,0.05);height:fit-content;}
+.checkout-title{font-weight:700;margin-bottom:30px;font-family:'Bebas Neue', cursive;}
+.input-group{position:relative;margin-bottom:20px;}
+.input-group input{width:100%;padding:18px 14px 8px;border:1px solid #ddd;border-radius:10px;}
+.input-group label{position:absolute;top:14px;left:14px;color:#777;transition:0.2s;background:#fff;padding:0 4px;}
+.input-group input:focus + label,input:not(:placeholder-shown) + label{top:-8px;font-size:11px;color:#000;}
+.autocomplete-list{position:absolute;background:#fff;border:1px solid #eee;width:100%;z-index:1000;border-radius:8px;max-height:200px;overflow-y:auto;}
+.autocomplete-item{padding:10px;cursor:pointer;}
+.autocomplete-item:hover{background:#f5f5f5;}
+.payment-box{border:1px solid #eee;padding:15px;border-radius:12px;margin-top:10px;cursor:pointer;}
+.payment-box.active{border:2px solid #000;}
+.btn-black{background:#000;color:#fff;padding:16px;border:none;border-radius:10px;font-weight:600;transition:0.2s;}
+.btn-black:hover{background:#222;transform:scale(1.03);}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+.summary-total{display:flex;justify-content:space-between;font-weight:700;font-size:18px;margin-top:20px;border-top:1px solid #eee;padding-top:15px;}
+.checkout-left.animate-form{opacity:0;transform:translateY(20px);animation:fadeUp 0.5s forwards;}
+.checkout-right.animate-summary{opacity:0;transform:translateY(20px);animation:fadeUp 0.5s forwards;animation-delay:0.1s;}
+.success-box.animate-success{opacity:0;transform:translateY(20px);animation:fadeUp 0.5s forwards;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+@media(max-width:900px){.checkout-grid{flex-direction:column;}.checkout-right{width:100%;position:relative;top:0;}}
+</style>
+
+{% endblock %}
